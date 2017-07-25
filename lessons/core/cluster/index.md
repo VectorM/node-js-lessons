@@ -3,7 +3,7 @@
 https://nodejs.org/api/cluster.html
 
 Кластер это модуль ноды облягчающий работу с дочерними процессами и позволяющий распараллелить себя для улучшения маппинга на ядра машины.
-```
+```javascript
 var cluster = require('cluster');
 
 if (cluster.isWorker) {

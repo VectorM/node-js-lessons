@@ -11,7 +11,7 @@ https://nodejs.org/api/fs.html
 Есть возможно работать с правами доступа (`fs.chmod`, `fs.chown`), проверять наличие файла (`fs.exists`), получать информацию о файле (`fs.stat`), считывать содержимое директорий (`fs.readdir`) и удалять файлы (`fs.unlink`).
 
 Также есть интересная возможность смотреть за изменениями в папке `fs.watch`
-```
+```javascript
 fs.watch(__dirname, {}, function (eventType, filename) {
   console.log(filename, 'changed');
 });
