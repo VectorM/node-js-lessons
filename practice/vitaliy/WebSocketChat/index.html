@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <style>
+    body{
+      margin-top: 30px;
+    }
+
+    #messageArea {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="userFormArea" class="row">
+      <div class="col-md-12">
+        <form id="userForm">
+          <div class="form-group">
+            <label for="">Enter Username</label>
+            <input type="text" class="form-control" id="username" />
+            <br>
+            <input value="Login" type="submit" class="btn btn-primary"/>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="messageArea" class="row">
+      <div class="col-md-4">
+          <div class="well">
+            <h3>Online users</h3>
+            <ul class="list-group" id="users"></ul>
+          </div>
+      </div>
+      <div class="col-md-8">
+        <div class="chat" id="chat"></div>
+        <form id="messageForm">
+          <div class="form-group">
+            <label for="">Enter Message</label>
+            <textarea class="form-control" id="message"></textarea>
+            <br>
+            <input value="Send Message" type="submit" class="btn btn-primary"/>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      let socket = io('http://localhost:3000/');
+      /* user form */
+      let userFormArea = document.getElementById('userFormArea')
+      let userForm = document.getElementById('userForm')
+      let userName = document.getElementById('username')
+      let users = document.getElementById('users')
+
+      userForm.addEventListener("submit", e => {
+        e.preventDefault();
+        socket.emit('new user', userName.value, (data) => {
+          if (data) {
+            userFormArea.style.display = 'none';
+            messageArea.style.display = 'block';
+
+          }
+        })
+        userName.value = '';
+      })
+
+      socket.on('get users', (data) => {
+        let html = '';
+        for(i = 0;i < data.length; i++) {
+          html += `<li class="list-group-item">${data[i]}</li>`
+        }
+        users.innerHTML = html
+      })
+      /* user form ends*/
+
+      /* message form */
+      let messageArea = document.getElementById('messageArea')
+      let messageForm = document.getElementById('messageForm');
+      let message = document.getElementById('message');
+      let chat = document.getElementById('chat');
+
+      messageForm.addEventListener("submit", e => {
+        e.preventDefault();
+        socket.emit('send message', message.value)
+        message.value = '';
+      })
+
+      socket.on('new message', (data) => {
+        let elemDiv = document.createElement('div');
+        elemDiv.className = 'well';
+        elemDiv.innerHTML = data.msg
+        chat.appendChild(elemDiv)
+      })
+      /* message form ends */
+  </script>
+</body>
+</html>
